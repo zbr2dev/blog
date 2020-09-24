@@ -1,9 +1,8 @@
 import React from "react"
 import { Link } from "gatsby"
-import "./style.css"
+import "../styles/style.css"
 
 const Post = ({ post }) => {
-  console.log(post)
   return (
     <div className="post-item">
       <Link to={`post/${post.slug}`}>
@@ -13,22 +12,38 @@ const Post = ({ post }) => {
     </div>
   )
 }
-const Homepage = ({ pageContext }) => {
+const Homepage = ({ data }) => {
+  const posts = data.allWordpressPost.edges;
+
   return (
     <div>
       <div className="header-container">
-        dsmkdklsdsdksdsd
         <h1>Posts</h1>
       </div>
-
       <div className="posts-container">
-        {pageContext.posts
-          .filter(post => post.visibleOnHomePage)
+        {posts
           .map(post => {
-            return <Post post={post} />
+            return <Post key={post.node.id} post={post.node} />
           })}
       </div>
     </div>
   )
 }
+
+export const query = graphql`
+  {
+    allWordpressPost(filter: {acf: {don_t_show_the_post_on_the_homepage: {eq: null}}}) {
+      edges {
+        node {
+          id,
+          content
+          slug
+          id
+          date
+          title
+        }
+      }
+    }
+  }
+`
 export default Homepage
